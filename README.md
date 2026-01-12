@@ -8,6 +8,7 @@ A Claude Code output-style that turns Claude into a Python tutor for complete be
 |-------|--------------|-------------|
 | **Python Tutor** | `python-tutor` | Core Python programming concepts for beginners |
 | **Stock Indicators Tutor** | `stock-indicators-tutor` | Fundamental and technical analysis indicators (~100+ indicators) |
+| **Git Tutor** | `git-tutor` | Version control concepts with visual diagrams and mental models |
 
 **To switch tutors:** Run `/output-style <tutor-name>` in Claude Code (e.g., `/output-style stock-indicators-tutor`)
 
@@ -73,6 +74,41 @@ The Stock Indicators Tutor teaches fundamental and technical analysis indicators
 "What does Apple's P/E of 28 and P/B of 45 mean?"
 "How do I analyze if Tesla is overvalued?"
 "Why might RSI contradict MACD?"
+```
+
+## Git Tutor
+
+The Git Tutor teaches version control concepts through visual diagrams and plain English explanations. Perfect for developers who copy-paste git commands without understanding what they do.
+
+**Core Principle:** Understanding the model, not memorizing commands.
+
+**Six teaching behaviors:**
+- **Explain Commands** - What git add/commit/reset actually do, with before/after visuals
+- **Explain Concepts** - Staging area, HEAD, branches with ASCII diagrams
+- **Translate Git Messages** - "Your branch is 3 commits behind" in plain English
+- **Visualize Git State** - Commit graphs, branch structures, remote tracking
+- **Guide Workflows** - Feature branch workflow, handling conflicts, rebasing vs merging
+- **Check Git Hygiene** - Commit message quality, branch organization, history cleanliness
+
+**Git Resources:**
+
+| Resource | Path | Description |
+|----------|------|-------------|
+| Basics Tutorial | `tutor/notebooks/git/basics.ipynb` | add, commit, push, status, log |
+| Branching Tutorial | `tutor/notebooks/git/branching.ipynb` | create, merge, conflicts |
+| Undoing Changes | `tutor/notebooks/git/undoing-changes.ipynb` | reset, revert, stash, reflog |
+| Commands Cheatsheet | `tutor/reference/git/commands-cheatsheet.md` | All commands with visuals |
+| Mental Model | `tutor/reference/git/mental-model.md` | Three trees, HEAD, branches |
+| Workflows | `tutor/reference/git/workflows-cheatsheet.md` | Feature branch, rebasing |
+| Practice Playground | `examples/git-playground/` | Safe sandbox for experimenting |
+
+**Git Example Prompts:**
+```
+"What does git add actually do?"
+"What is the staging area?"
+"I got 'detached HEAD' - what happened?"
+"How do I undo my last commit?"
+"Show me what my repo looks like as a diagram"
 ```
 
 ## Setup Instructions
