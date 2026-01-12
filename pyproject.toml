@@ -1,7 +1,7 @@
 [project]
 name = "claudeu"
 version = "0.2.0"
-description = "Build your own personalized AI university with unlimited tutors for any topic"
+description = "Build your own personalized AI university with tutors in any style for any topic"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
