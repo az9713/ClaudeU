@@ -1,6 +1,6 @@
-# Python Tutor - Technical Architecture
+# ClaudeU - Technical Architecture
 
-A detailed technical specification of how the Python Tutor system works, for developers who need to understand, maintain, or extend the project.
+A detailed technical specification of how the ClaudeU system works, for developers who need to understand, maintain, or extend the project.
 
 ---
 
@@ -10,12 +10,14 @@ A detailed technical specification of how the Python Tutor system works, for dev
 2. [Component Architecture](#2-component-architecture)
 3. [Claude Code Integration](#3-claude-code-integration)
 4. [Output Style Specification](#4-output-style-specification)
-5. [Artifact Generation](#5-artifact-generation)
-6. [Example Project Analysis](#6-example-project-analysis)
-7. [Data Flow Diagrams](#7-data-flow-diagrams)
-8. [Extension Points](#8-extension-points)
-9. [Security Considerations](#9-security-considerations)
-10. [Performance Characteristics](#10-performance-characteristics)
+5. [Tutor Type System](#5-tutor-type-system)
+6. [The /tutor Command](#6-the-tutor-command)
+7. [Artifact Generation](#7-artifact-generation)
+8. [Example Project Analysis](#8-example-project-analysis)
+9. [Data Flow Diagrams](#9-data-flow-diagrams)
+10. [Extension Points](#10-extension-points)
+11. [Security Considerations](#11-security-considerations)
+12. [Performance Characteristics](#12-performance-characteristics)
 
 ---
 
@@ -23,7 +25,7 @@ A detailed technical specification of how the Python Tutor system works, for dev
 
 ### Architecture Classification
 
-Python Tutor is a **prompt engineering project** that customizes AI assistant behavior through configuration, not traditional application code.
+ClaudeU is a **prompt engineering project** that customizes AI assistant behavior through configuration, not traditional application code.
 
 **Category**: AI Behavior Configuration
 **Pattern**: System Prompt Customization
@@ -44,7 +46,7 @@ Python Tutor is a **prompt engineering project** that customizes AI assistant be
            │ API Calls      │ Clone/Pull     │ HTTP Requests   │ Jupyter
            ▼                ▼                ▼                 ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                         PYTHON TUTOR SYSTEM                              │
+│                         CLAUDEU SYSTEM                                   │
 │                                                                          │
 │  ┌──────────────────────────────────────────────────────────────────┐   │
 │  │                     CLAUDE CODE RUNTIME                           │   │
@@ -276,10 +278,25 @@ Project-level styles override user-level styles with the same name.
 
 ```yaml
 ---
-name: string          # Unique identifier (kebab-case)
-description: string   # One-line description
+name: string                    # Unique identifier (kebab-case)
+type: string                    # "method" | "topic" | "combined"
+description: string             # One-line description
+keep-coding-instructions: bool  # Optional, default varies by type
+source-method: string           # Only for type: combined
+source-topic: string            # Only for type: combined
 ---
 ```
+
+| Field | Required | Default | Description |
+|-------|----------|---------|-------------|
+| `name` | Yes | - | Unique identifier, lowercase with hyphens |
+| `type` | Yes* | "topic" | Classifies the tutor (see Type System section) |
+| `description` | Yes | - | One-line description for `/tutor list` |
+| `keep-coding-instructions` | No | false for methods, true for topics | Whether to include coding-specific system prompt |
+| `source-method` | Combined only | - | The method tutor this was derived from |
+| `source-topic` | Combined only | - | The topic tutor this was derived from |
+
+*Files without `type` are treated as `topic` for backward compatibility.
 
 ### Behavior Definition Schema
 
@@ -341,7 +358,260 @@ User request type → Response behavior
 
 ---
 
-## 5. Artifact Generation
+## 5. Tutor Type System
+
+### Type Classification
+
+Every tutor file has a `type` field that determines its role:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        TUTOR TYPE HIERARCHY                              │
+│                                                                          │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                     METHOD TUTORS                                │    │
+│  │                 (type: method)                                   │    │
+│  │                                                                  │    │
+│  │  ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────────────┐    │    │
+│  │  │ socratic  │ │rubber-duck│ │   eli5    │ │challenge-first│    │    │
+│  │  └───────────┘ └───────────┘ └───────────┘ └───────────────┘    │    │
+│  │  ┌───────────┐                                                   │    │
+│  │  │minimalist │                                                   │    │
+│  │  └───────────┘                                                   │    │
+│  │                                                                  │    │
+│  │  Defines HOW to teach (pedagogy, interaction patterns)          │    │
+│  │  keep-coding-instructions: false                                 │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                   │                                      │
+│                                   │ /tutor combine                       │
+│                                   ▼                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                     TOPIC TUTORS                                 │    │
+│  │                 (type: topic)                                    │    │
+│  │                                                                  │    │
+│  │  ┌─────────────┐ ┌─────────────┐ ┌──────────────────────────┐   │    │
+│  │  │python-tutor │ │  git-tutor  │ │stock-indicators-tutor    │   │    │
+│  │  └─────────────┘ └─────────────┘ └──────────────────────────┘   │    │
+│  │                                                                  │    │
+│  │  Defines WHAT to teach (domain, constraints, artifacts)         │    │
+│  │  keep-coding-instructions: varies                                │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                   │                                      │
+│                                   │ Result                               │
+│                                   ▼                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐    │
+│  │                     COMBINED TUTORS                              │    │
+│  │                 (type: combined)                                 │    │
+│  │                                                                  │    │
+│  │  ┌─────────────────────────┐ ┌─────────────────────────┐        │    │
+│  │  │socratic-python-tutor    │ │eli5-git-tutor           │        │    │
+│  │  └─────────────────────────┘ └─────────────────────────┘        │    │
+│  │                                                                  │    │
+│  │  Generated via /tutor combine <method> <topic>                   │    │
+│  │  Inherits: method's pedagogy + topic's domain                    │    │
+│  └─────────────────────────────────────────────────────────────────┘    │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Type Characteristics
+
+| Type | Purpose | `keep-coding-instructions` | Artifact Locations |
+|------|---------|---------------------------|-------------------|
+| `method` | Defines pedagogy | `false` (general-purpose) | None |
+| `topic` | Defines domain | Varies (often `true`) | Yes (`tutor/notebooks/`, etc.) |
+| `combined` | Merges both | Inherited from topic | Inherited from topic |
+
+### Method Tutor Structure
+
+```markdown
+---
+name: method-name
+type: method
+description: One-line description
+keep-coding-instructions: false
+---
+
+## Core Constraint
+**The key behavioral rule** (e.g., "Never give direct answers")
+
+## How to Respond
+[Interaction patterns for any question type]
+
+## Example Interaction
+[Demonstrate the method in action]
+
+## Boundary Test
+[Self-check: "If I'm about to do X, stop and do Y instead"]
+```
+
+### Topic Tutor Structure
+
+```markdown
+---
+name: topic-tutor
+type: topic
+description: One-line description
+---
+
+## Core Constraint
+**What this tutor will NOT do** (e.g., "No implementation code")
+
+## Target User
+[Who this is for, what they know]
+
+## Core Behaviors
+[Domain-specific teaching patterns]
+
+## Artifacts
+- Notebooks: `tutor/notebooks/domain/`
+- Cheatsheets: `tutor/reference/domain/`
+```
+
+### Combined Tutor Structure
+
+```markdown
+---
+name: method-topic-tutor
+type: combined
+description: <Topic> tutor using <Method> teaching style
+source-method: method-name
+source-topic: topic-tutor
+---
+
+## Teaching Method: <Method>
+[Extracted from method tutor]
+
+## Topic Domain: <Topic>
+[Extracted from topic tutor]
+
+## Combined Behaviors
+[How method applies to topic]
+
+## Artifacts
+[Inherited from topic tutor]
+```
+
+---
+
+## 6. The /tutor Command
+
+### Command Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        /tutor COMMAND FLOW                                   │
+│                                                                              │
+│  User: /tutor <subcommand> [args]                                            │
+│         │                                                                    │
+│         ▼                                                                    │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                     SUBCOMMAND ROUTER                                  │  │
+│  │                                                                        │  │
+│  │  ┌──────┐ ┌────────┐ ┌───────┐ ┌──────┐ ┌────────┐ ┌────────┐         │  │
+│  │  │ list │ │describe│ │combine│ │create│ │activate│ │ delete │         │  │
+│  │  └──┬───┘ └───┬────┘ └───┬───┘ └──┬───┘ └───┬────┘ └───┬────┘         │  │
+│  └─────┼─────────┼──────────┼────────┼─────────┼──────────┼──────────────┘  │
+│        │         │          │        │         │          │                  │
+│        ▼         ▼          ▼        ▼         ▼          ▼                  │
+│  ┌──────────┐ ┌────────┐ ┌────────┐ ┌──────┐ ┌────────┐ ┌──────────┐        │
+│  │Glob file │ │Read one│ │Read two│ │Wizard│ │Show    │ │Confirm & │        │
+│  │names,    │ │.md file│ │.md files│ │prompts│ │activate│ │delete    │        │
+│  │infer type│ │extract │ │validate│ │generate│ │instruct│ │.md file  │        │
+│  │(no reads)│ │details │ │& merge │ │new file│ │        │ │(Bash rm) │        │
+│  └──────────┘ └────────┘ └────────┘ └──────┘ └────────┘ └──────────┘        │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Command File Location
+
+```
+.claude/commands/tutor.md
+```
+
+### Frontmatter
+
+```yaml
+---
+name: tutor
+description: Manage tutors - list, describe, combine, create, activate, or delete
+allowed-tools:
+  - Read
+  - Write
+  - Glob
+  - Grep
+  - Bash
+  - AskUserQuestion
+arguments:
+  - name: subcommand
+    description: "list | describe | combine | create | activate | delete"
+    required: true
+  - name: args
+    description: "Arguments for the subcommand"
+    required: false
+---
+```
+
+### Subcommand Specifications
+
+| Subcommand | Input | Output | Side Effects |
+|------------|-------|--------|--------------|
+| `list` | None | Categorized tutor list (no descriptions) | None |
+| `describe` | Tutor name | Details + core constraint | None |
+| `combine` | Two tutor names | Success message | Creates new .md file |
+| `create` | New tutor name | Success message | Creates new .md file |
+| `activate` | Tutor name | Instructions | None |
+| `delete` | Tutor name | Success/cancelled message | Deletes .md file (after confirmation) |
+
+### `/tutor list` Type Inference
+
+For performance, `/tutor list` uses **filename-based inference** instead of reading file contents:
+
+| Filename Pattern | Inferred Type |
+|------------------|---------------|
+| Known methods: `socratic`, `eli5`, `rubber-duck`, `minimalist`, `challenge-first` | `method` |
+| Ends with `-tutor` (e.g., `python-tutor`, `git-tutor`) | `topic` |
+| Contains known method prefix + another part (e.g., `socratic-python-tutor`) | `combined` |
+| Anything else | `topic` (default) |
+
+**Important**: Topic tutors should end with `-tutor` for correct classification.
+
+### Naming Normalization Algorithm
+
+```python
+def normalize_combined_name(tutor_a, tutor_b, type_a, type_b):
+    """
+    Ensures consistent naming regardless of input order.
+
+    Rules:
+    1. method + topic → "METHOD-TOPIC"
+    2. topic + method → "METHOD-TOPIC" (swapped)
+    3. same types → alphabetical order
+    """
+    if type_a == "method" and type_b == "topic":
+        return f"{tutor_a}-{tutor_b}"
+    elif type_a == "topic" and type_b == "method":
+        return f"{tutor_b}-{tutor_a}"  # Swap: method first
+    else:
+        # Same types: alphabetical
+        return f"{min(tutor_a, tutor_b)}-{max(tutor_a, tutor_b)}"
+```
+
+### Validation Matrix
+
+| Combination | Action | User Prompt |
+|-------------|--------|-------------|
+| method + topic | Proceed | None |
+| topic + method | Swap & proceed | None |
+| method + method | Warn | "May produce conflicting instructions. Proceed?" |
+| topic + topic | Warn | "Will mix domains. Proceed?" |
+| self + self | Error | "Cannot combine a tutor with itself." |
+| missing + any | Error | "Tutor 'X' not found. Available: ..." |
+
+---
+
+## 7. Artifact Generation
 
 ### Notebook Generation
 
@@ -407,7 +677,7 @@ Quick reference for [context].
 
 ---
 
-## 6. Example Project Analysis
+## 8. Example Project Analysis
 
 ### `example.ipynb` Technical Breakdown
 
@@ -531,7 +801,7 @@ def extract_job_data(soup: BeautifulSoup) -> dict
 
 ---
 
-## 7. Data Flow Diagrams
+## 9. Data Flow Diagrams
 
 ### Complete System Data Flow
 
@@ -645,7 +915,7 @@ def extract_job_data(soup: BeautifulSoup) -> dict
 
 ---
 
-## 8. Extension Points
+## 10. Extension Points
 
 ### Adding New Behaviors
 
@@ -701,7 +971,7 @@ When [user does/asks X]:
 
 ---
 
-## 9. Security Considerations
+## 11. Security Considerations
 
 ### Web Scraping Risks
 
@@ -729,7 +999,7 @@ When [user does/asks X]:
 
 ---
 
-## 10. Performance Characteristics
+## 12. Performance Characteristics
 
 ### Latency Sources
 

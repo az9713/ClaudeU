@@ -1,6 +1,23 @@
-# Python Tutor
+# ClaudeU
 
-A Claude Code output-style that turns Claude into a Python tutor for complete beginners. Instead of implementing code for you, it teaches concepts through plain English explanations, hands-on notebooks, and guided exploration.
+A Claude Code output-style framework that lets you build your own **personalized AI university** - with unlimited courses taught by unlimited customized tutors, all tailored to how YOU learn best.
+
+## The Vision: Your Personal AI University
+
+Imagine having access to a university where:
+- **Every course is designed for YOU** - your background, your pace, your interests
+- **Every professor teaches YOUR way** - Socratic questioning, simple analogies, hands-on challenges, or concise summaries
+- **You can create new courses instantly** - music theory, cooking techniques, chess strategy, anything
+- **You can invent new teaching styles** - combine methods, experiment with pedagogy
+- **Your tutor library grows over time** - building a personalized learning ecosystem you own
+
+**This project makes that possible.**
+
+Instead of one-size-fits-all AI tutoring, you create and combine:
+- **Topic Tutors** (WHAT to teach): Python, Git, stock analysis, or any subject you want
+- **Teaching Methods** (HOW to teach): Socratic, ELI5, challenge-first, or your own invention
+
+Mix any method with any topic. `socratic` + `python-tutor` = a Python tutor that only asks guiding questions. `eli5` + `chess-tutor` = a chess tutor that explains like you're 5. The combinations are endless.
 
 ## Why Output Styles Instead of Just Prompting?
 
@@ -20,13 +37,97 @@ You can always prompt Claude directly. So why use output styles?
 
 ## Available Tutors
 
+This project includes two types of tutors:
+
+### Topic Tutors (WHAT to teach)
+
 | Tutor | Output Style | Description |
 |-------|--------------|-------------|
 | **Python Tutor** | `python-tutor` | Core Python programming concepts for beginners |
 | **Stock Indicators Tutor** | `stock-indicators-tutor` | Fundamental and technical analysis indicators (~100+ indicators) |
 | **Git Tutor** | `git-tutor` | Version control concepts with visual diagrams and mental models |
 
+### Teaching Methods (HOW to teach)
+
+| Method | Output Style | Description |
+|--------|--------------|-------------|
+| **Socratic** | `socratic` | Teaches through guiding questions - never gives direct answers |
+| **Rubber Duck** | `rubber-duck` | Makes you explain your thinking step-by-step before offering insight |
+| **ELI5** | `eli5` | Explains everything like you're 5 - no jargon, simple analogies |
+| **Challenge-First** | `challenge-first` | Poses a puzzle before explaining - learning through doing |
+| **Minimalist** | `minimalist` | Ultra-concise responses under 50 words |
+
+### Combining Tutors
+
+You can combine a teaching method with a topic tutor using the `/tutor combine` command:
+
+```bash
+/tutor combine socratic python-tutor
+# Creates: socratic-python-tutor (Python tutor that only asks guiding questions)
+
+/tutor combine eli5 git-tutor
+# Creates: eli5-git-tutor (Git tutor with no jargon, simple analogies)
+```
+
 **To switch tutors:** Run `/output-style <tutor-name>` in Claude Code (e.g., `/output-style stock-indicators-tutor`)
+
+### What You Can Build
+
+The included tutors are just the beginning. Create tutors for **any topic you want to learn**:
+
+| Your Interest | Create This | Combine With |
+|---------------|-------------|--------------|
+| Learning piano | `piano-tutor` | `challenge-first` for hands-on practice |
+| Studying history | `history-tutor` | `socratic` to explore cause and effect |
+| Cooking skills | `cooking-tutor` | `eli5` for simple technique explanations |
+| Chess strategy | `chess-tutor` | `rubber-duck` to explain your moves |
+| Learning Spanish | `spanish-tutor` | `minimalist` for quick vocabulary drills |
+| Home repair | `diy-tutor` | `challenge-first` for project-based learning |
+
+**Your tutors grow with you.** Start with the basics, add specialized tutors as your interests expand. Over time, you build a personalized curriculum - your own AI university that knows exactly how to teach YOU
+
+## The /tutor Command
+
+A unified command for managing all tutors:
+
+| Command | Description |
+|---------|-------------|
+| `/tutor list` | Show all available tutors organized by type |
+| `/tutor describe <name>` | Show details about a specific tutor |
+| `/tutor combine <A> <B>` | Combine a method with a topic tutor |
+| `/tutor create <name>` | Interactively create a new tutor |
+| `/tutor activate <name>` | Instructions to activate a tutor |
+| `/tutor delete <name>` | Delete a tutor (with confirmation) |
+
+**Examples:**
+```bash
+/tutor list                           # See all available tutors
+/tutor describe socratic              # Learn about the Socratic method
+/tutor combine rubber-duck git-tutor  # Git tutor that makes you explain your code
+/tutor create music-tutor             # Create a new tutor for music theory
+/tutor create deep-work               # Create a new teaching method
+```
+
+### Building Your Personal University
+
+```bash
+# Week 1: Start with the basics
+/tutor create cooking-tutor           # Your first custom topic
+/tutor combine eli5 cooking-tutor     # Make it beginner-friendly
+
+# Week 2: Add more subjects
+/tutor create finance-tutor           # Personal finance
+/tutor create fitness-tutor           # Exercise science
+
+# Week 3: Create your own teaching style
+/tutor create spaced-repetition       # A method focused on memory
+/tutor combine spaced-repetition finance-tutor
+
+# Month 2: Your university grows...
+# Now you have 10+ tutors, each teaching YOUR way
+```
+
+See [docs/TUTOR_COMMAND.md](docs/TUTOR_COMMAND.md) for complete documentation
 
 **Resources:**
 - [Video explainer](https://youtu.be/8FpZT6-h8wY)
@@ -38,6 +139,7 @@ You can always prompt Claude directly. So why use output styles?
 | [Why Output Styles?](docs/WHY_OUTPUT_STYLES.md) | Everyone | Why tutors-as-output-styles beat ad-hoc prompting |
 | [Quick Start Guide](docs/QUICK_START.md) | Everyone | Get running in 5 minutes + 12 educational use cases |
 | [User Guide](docs/USER_GUIDE.md) | Learners | Complete guide for using the tutor |
+| [/tutor Command](docs/TUTOR_COMMAND.md) | Everyone | Complete reference for the unified /tutor command |
 | [Developer Guide](docs/DEVELOPER_GUIDE.md) | Developers | Deep dive for extending the project |
 | [Technical Architecture](docs/TECHNICAL_ARCHITECTURE.md) | Developers | System design and specifications |
 | [Troubleshooting](docs/TROUBLESHOOTING.md) | Everyone | Solutions to common problems |
@@ -158,8 +260,8 @@ This repo uses project-level configuration. To use it in your own projects:
 
 ```bash
 # Clone and navigate to this directory
-git clone https://github.com/ShawhinT/AI-Builders-Bootcamp-8.git
-cd AI-Builders-Bootcamp-8/python-tutor
+git clone https://github.com/az9713/ClaudeU.git
+cd ClaudeU
 
 # Install dependencies (choose one)
 uv sync
@@ -201,3 +303,9 @@ Claude: [Describes which file and lines to modify (example.ipynb:45-60),
          notes ripple effects and common mistakes,
          does NOT write the implementation code]
 ```
+
+## Acknowledgements
+
+1. This work is inspired by the YouTube video: **"How to Build a Python Tutor with Claude Code (Output Styles)"** by Shaw Talebi ([watch here](https://www.youtube.com/watch?v=8FpZT6-h8wY&t=6s)). We have since greatly enhanced the project into ClaudeU - a full framework for building personalized AI tutors.
+
+2. All code and documentation were generated by **Claude Code** and **Claude Opus 4.5**.

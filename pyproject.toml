@@ -1,7 +1,7 @@
 [project]
-name = "python-tutor"
+name = "claudeu"
 version = "0.2.0"
-description = "AI tutoring system for Python programming and Stock Analysis"
+description = "Build your own personalized AI university with unlimited tutors for any topic"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

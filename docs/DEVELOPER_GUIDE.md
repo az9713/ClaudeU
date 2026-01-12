@@ -1,6 +1,6 @@
-# Python Tutor - Developer Guide
+# ClaudeU - Developer Guide
 
-A comprehensive guide for developers who want to understand, modify, or extend the Python Tutor project. This guide assumes you have programming experience (C, C++, Java) but may be new to Python, web development, or AI-assisted tools.
+A comprehensive guide for developers who want to understand, modify, or extend the ClaudeU project. This guide assumes you have programming experience (C, C++, Java) but may be new to Python, web development, or AI-assisted tools.
 
 ---
 
@@ -12,37 +12,48 @@ A comprehensive guide for developers who want to understand, modify, or extend t
 4. [Project Architecture Deep Dive](#4-project-architecture-deep-dive)
 5. [Understanding Each File](#5-understanding-each-file)
 6. [How Claude Code Output Styles Work](#6-how-claude-code-output-styles-work)
-7. [Web Scraping Fundamentals](#7-web-scraping-fundamentals)
-8. [Working with Jupyter Notebooks](#8-working-with-jupyter-notebooks)
-9. [Extending the Project](#9-extending-the-project)
-10. [Testing and Quality Assurance](#10-testing-and-quality-assurance)
-11. [Deployment and Distribution](#11-deployment-and-distribution)
-12. [Glossary](#12-glossary)
+7. [The Tutor Type System](#7-the-tutor-type-system)
+8. [The /tutor Command](#8-the-tutor-command)
+9. [Web Scraping Fundamentals](#9-web-scraping-fundamentals)
+10. [Working with Jupyter Notebooks](#10-working-with-jupyter-notebooks)
+11. [Extending the Project](#11-extending-the-project)
+12. [Testing and Quality Assurance](#12-testing-and-quality-assurance)
+13. [Deployment and Distribution](#13-deployment-and-distribution)
+14. [Glossary](#14-glossary)
 
 ---
 
 ## 1. Introduction
 
-### What is Python Tutor?
+### What is ClaudeU?
 
-Python Tutor is **not** a traditional application with a user interface. It's a **behavioral configuration** for Claude Code (Anthropic's AI coding assistant) that transforms how Claude responds to beginner programmers.
+ClaudeU is **not** just a single tutor - it's a **framework for building your own personalized AI university**. At its core, it's a behavioral configuration system for Claude Code that lets you create unlimited tutors for any subject, each teaching in whatever style works best for you.
 
-**Key Concept**: Think of it like a configuration file that tells Claude to behave like a patient programming teacher instead of a code-generating machine.
+**Key Concept**: Think of it as a tutor factory. The included Python, Git, and Stock tutors are examples - but you can create tutors for cooking, chess, music theory, languages, or literally anything you want to learn.
+
+### The Vision: Unlimited Customization
+
+This framework enables:
+- **Unlimited topic tutors**: Create a tutor for any subject you want to learn
+- **Unlimited teaching methods**: Invent new pedagogical approaches
+- **Mix and match**: Combine any method with any topic (socratic + cooking-tutor, eli5 + chess-tutor)
+- **Personal ownership**: Your tutor library grows over time - your own AI university
 
 ### Why Does This Exist?
 
-Many beginners use AI tools to generate code without understanding what the code does. Python Tutor addresses this by:
-- Teaching concepts instead of providing ready-to-paste code
-- Using the beginner's own codebase as teaching material
-- Creating hands-on practice notebooks
-- Translating error messages into plain English
+Many beginners use AI tools to generate code without understanding what the code does. But more broadly, people want **personalized education** that adapts to their learning style and interests. This framework addresses both by:
+- Teaching concepts instead of providing ready-to-paste solutions
+- Using the learner's own materials as teaching context
+- Creating hands-on practice artifacts
+- Allowing complete customization of both WHAT is taught and HOW
 
 ### Who Is This Guide For?
 
 This guide is for developers who:
-- Want to customize how the tutor teaches
-- Need to add new teaching capabilities
-- Want to create their own output styles for Claude Code
+- Want to create new tutors for any subject
+- Want to invent new teaching methods
+- Want to customize how existing tutors teach
+- Want to build a personal library of AI tutors
 - Are learning modern Python development practices
 
 ---
@@ -247,19 +258,32 @@ You should see a confirmation that the tutor style is active.
 python-tutor/
 │
 ├── .claude/                          # Claude Code configuration
-│   └── output-styles/                # Custom behavior definitions
-│       └── python-tutor.md           # THE CORE FILE - defines tutor behavior
+│   ├── output-styles/                # Custom behavior definitions
+│   │   ├── python-tutor.md           # Topic tutor: Python basics
+│   │   ├── git-tutor.md              # Topic tutor: Git version control
+│   │   ├── stock-indicators-tutor.md # Topic tutor: Financial indicators
+│   │   ├── socratic.md               # Method: guiding questions only
+│   │   ├── rubber-duck.md            # Method: explain your thinking
+│   │   ├── eli5.md                   # Method: simple analogies
+│   │   ├── challenge-first.md        # Method: puzzle before explanation
+│   │   └── minimalist.md             # Method: ultra-concise responses
+│   └── commands/                     # Custom slash commands
+│       └── tutor.md                  # /tutor command for managing tutors
 │
 ├── tutor/                            # Generated teaching materials
 │   ├── notebooks/                    # Practice Jupyter notebooks
-│   │   └── html-and-beautifulsoup.ipynb
+│   │   └── web-scraping/             # Domain-specific notebooks
+│   │       └── html-and-beautifulsoup.ipynb
 │   └── reference/                    # Quick reference cheatsheets
-│       └── beautifulsoup-cheatsheet.md
+│       └── web-scraping/             # Domain-specific cheatsheets
+│           └── beautifulsoup-cheatsheet.md
 │
 ├── docs/                             # Documentation (you're reading it)
-│   ├── DEVELOPER_GUIDE.md
-│   ├── USER_GUIDE.md
-│   └── QUICK_START.md
+│   ├── DEVELOPER_GUIDE.md            # This file
+│   ├── USER_GUIDE.md                 # For learners
+│   ├── QUICK_START.md                # 5-minute setup
+│   ├── TUTOR_COMMAND.md              # /tutor command reference
+│   └── WHY_OUTPUT_STYLES.md          # Rationale for output styles
 │
 ├── example.ipynb                     # Working example for students
 ├── pyproject.toml                    # Project metadata and dependencies
@@ -562,7 +586,285 @@ Now the style loads automatically when you start Claude Code in that directory.
 
 ---
 
-## 7. Web Scraping Fundamentals
+## 7. The Tutor Type System
+
+### Understanding Tutor Types
+
+This project uses a **type system** to organize tutors. Every tutor file has a `type` field in its YAML frontmatter:
+
+```yaml
+---
+name: tutor-name
+type: method  # or 'topic' or 'combined'
+description: What this tutor does
+---
+```
+
+### The Three Types
+
+| Type | Purpose | Examples |
+|------|---------|----------|
+| `method` | Defines HOW to teach (pedagogy) | socratic, eli5, rubber-duck |
+| `topic` | Defines WHAT to teach (domain) | python-tutor, git-tutor |
+| `combined` | Generated from method + topic | socratic-python-tutor |
+
+### Method Tutors
+
+Method tutors define a **teaching approach** that works with any subject:
+
+```yaml
+---
+name: socratic
+type: method
+description: Teaches through guiding questions - never gives direct answers
+keep-coding-instructions: false
+---
+```
+
+**Key characteristics:**
+- `keep-coding-instructions: false` - Makes them general-purpose (not coding-specific)
+- Define interaction patterns, not domain knowledge
+- Can be combined with any topic tutor
+
+**Available methods:**
+| Method | Core Approach |
+|--------|---------------|
+| `socratic` | Only asks guiding questions, never gives direct answers |
+| `rubber-duck` | Makes user explain their thinking before offering insight |
+| `eli5` | Uses simple analogies, no jargon ("Explain Like I'm 5") |
+| `challenge-first` | Poses a puzzle before explaining the concept |
+| `minimalist` | Ultra-concise responses under 50 words |
+
+### Topic Tutors
+
+Topic tutors define **domain knowledge** and teaching constraints:
+
+```yaml
+---
+name: python-tutor
+type: topic
+description: Pedagogical Python assistant for complete beginners
+---
+```
+
+**Key characteristics:**
+- Define what subject matter to teach
+- Include artifact locations (notebooks, cheatsheets)
+- Define target user profile
+- Set domain-specific constraints (e.g., "no trading advice")
+
+**Available topics:**
+| Topic | Domain |
+|-------|--------|
+| `python-tutor` | Python programming for beginners |
+| `git-tutor` | Git version control with visual diagrams |
+| `stock-indicators-tutor` | Financial indicators and analysis |
+
+### Combined Tutors
+
+Combined tutors merge a method with a topic:
+
+```yaml
+---
+name: socratic-python-tutor
+type: combined
+description: Python tutor using Socratic questioning method
+source-method: socratic
+source-topic: python-tutor
+---
+```
+
+**How they work:**
+- Created via `/tutor combine <method> <topic>`
+- Inherit teaching approach from method
+- Inherit domain knowledge from topic
+- Stored with method-first naming: `socratic-python-tutor.md`
+
+### Creating a New Method Tutor
+
+1. Create file in `.claude/output-styles/`:
+   ```markdown
+   ---
+   name: your-method
+   type: method
+   description: One-line description
+   keep-coding-instructions: false
+   ---
+
+   # Your Method Tutor
+
+   ## Core Constraint
+   **The key rule that defines this method.**
+
+   ## How to Respond
+   [Interaction patterns]
+
+   ## Example Interaction
+   [Show expected behavior]
+
+   ## Boundary Test
+   [How to check if you're following the method]
+   ```
+
+2. Test it: `/output-style your-method`
+
+### Creating a New Topic Tutor
+
+1. Create file in `.claude/output-styles/`:
+   ```markdown
+   ---
+   name: your-topic-tutor
+   type: topic
+   description: One-line description
+   ---
+
+   # Your Topic Tutor
+
+   ## Core Constraint
+   **What this tutor will NOT do.**
+
+   ## Target User
+   [Who this tutor is for]
+
+   ## Core Behaviors
+   [Teaching behaviors specific to this domain]
+
+   ## Artifacts
+   - Notebooks: `tutor/notebooks/your-domain/`
+   - Cheatsheets: `tutor/reference/your-domain/`
+   ```
+
+2. Test it: `/output-style your-topic-tutor`
+
+### Backward Compatibility
+
+Files without a `type` field are treated as `type: topic` for backward compatibility with existing tutors.
+
+---
+
+## 8. The /tutor Command
+
+### What Is It?
+
+The `/tutor` command is a custom slash command that provides a unified interface for managing all tutors. It's defined in `.claude/commands/tutor.md`.
+
+### Available Subcommands
+
+| Subcommand | Syntax | Purpose |
+|------------|--------|---------|
+| `list` | `/tutor list` | Show all tutors by type (fast - no file reads) |
+| `describe` | `/tutor describe <name>` | Show tutor details |
+| `combine` | `/tutor combine <A> <B>` | Create combined tutor |
+| `create` | `/tutor create <name>` | Interactively create new tutor |
+| `activate` | `/tutor activate <name>` | Instructions to activate |
+| `delete` | `/tutor delete <name>` | Delete a tutor (with confirmation) |
+
+### How `/tutor list` Works
+
+For performance, `/tutor list` uses **filename-based type inference** instead of reading file contents:
+
+| Pattern | Inferred Type |
+|---------|---------------|
+| Known methods: `socratic`, `eli5`, `rubber-duck`, `minimalist`, `challenge-first` | `method` |
+| Ends with `-tutor` (e.g., `python-tutor`, `git-tutor`) | `topic` |
+| Contains known method + another part (e.g., `socratic-python-tutor`) | `combined` |
+| Anything else | `topic` (default) |
+
+**Naming convention**: Topic tutors **must** end with `-tutor` (e.g., `python-tutor`) for correct type inference.
+
+**Trade-off**: No descriptions shown in list output. Use `/tutor describe <name>` for details.
+
+### How `/tutor delete` Works
+
+The delete subcommand safely removes tutor files with confirmation:
+
+1. **Validates** the tutor exists
+2. **Prompts** for confirmation (cannot be undone)
+3. **Deletes** the file from `.claude/output-styles/`
+4. **Confirms** deletion
+
+```
+/tutor delete music-tutor
+
+> Delete tutor 'music-tutor'? This cannot be undone.
+> [Yes, delete it]
+
+Deleted 'music-tutor'.
+```
+
+### How `/tutor combine` Works
+
+#### Naming Normalization
+
+To prevent duplicates, filenames are normalized:
+
+| Combination | Output Filename |
+|-------------|-----------------|
+| method + topic | `METHOD-TOPIC.md` |
+| topic + method | `METHOD-TOPIC.md` (swapped) |
+| method + method | Alphabetical order |
+| topic + topic | Alphabetical order |
+
+**Example:**
+```bash
+/tutor combine socratic python-tutor  → socratic-python-tutor.md
+/tutor combine python-tutor socratic  → socratic-python-tutor.md (same file!)
+```
+
+#### Validation
+
+The command warns (but doesn't block) unusual combinations:
+- **method + method**: "May produce conflicting instructions"
+- **topic + topic**: "Will mix domains"
+
+Users can proceed if they confirm.
+
+#### Existence Checking
+
+If the normalized filename already exists, the user is prompted:
+```
+socratic-python-tutor already exists. Regenerate? (y/n)
+```
+
+### How `/tutor create` Works
+
+Interactive wizard that asks:
+
+**For methods:**
+1. Core teaching approach
+2. Key constraint
+3. Example interaction (optional)
+
+**For topics:**
+1. Domain/subject
+2. Target user
+3. What NOT to do
+
+### Implementation Details
+
+The command file (`.claude/commands/tutor.md`) contains:
+- Frontmatter with allowed tools (Read, Write, Glob, Grep, Bash, AskUserQuestion)
+- Subcommand routing logic
+- Filename-based type inference rules for `/tutor list`
+- Templates for file generation
+- Confirmation flows for delete operations
+- Error handling patterns
+
+See [TUTOR_COMMAND.md](TUTOR_COMMAND.md) for complete documentation.
+
+### Extending the /tutor Command
+
+To add a new subcommand:
+
+1. Open `.claude/commands/tutor.md`
+2. Add a new section with the subcommand name
+3. Define the trigger pattern
+4. Specify the action steps
+5. Include error handling
+
+---
+
+## 9. Web Scraping Fundamentals
 
 Since the example uses web scraping, here's a primer for developers new to this domain.
 
@@ -659,7 +961,7 @@ soup.select("div.job-listing h1")     # Nested search
 
 ---
 
-## 8. Working with Jupyter Notebooks
+## 10. Working with Jupyter Notebooks
 
 ### What Are Jupyter Notebooks?
 
@@ -741,7 +1043,7 @@ Follow this structure (from the python-tutor style):
 
 ---
 
-## 9. Extending the Project
+## 11. Extending the Project
 
 ### Adding New Teaching Behaviors
 
@@ -766,12 +1068,76 @@ User asks about X          → Your New Behavior response
 
 ### Creating Domain-Specific Tutors
 
-You can create tutors for other domains:
+The power of this framework is that you can create tutors for **any domain** - not just programming:
 
-**Data Science Tutor**:
+**Cooking Tutor** (non-technical):
+```markdown
+---
+name: cooking-tutor
+type: topic
+description: Teaches cooking techniques and recipes for home cooks
+---
+
+## Core Constraint
+**Explain techniques, don't just list recipes.** Help users understand WHY techniques work.
+
+## Target User
+Home cook who wants to understand cooking, not just follow recipes
+
+## Core Behaviors
+### 1. Explain Techniques
+When asked about a cooking method (sautéing, braising, etc.):
+- Explain the science (heat transfer, Maillard reaction, etc.)
+- Give sensory cues (what to look/listen/smell for)
+- Common mistakes to avoid
+```
+
+**Language Learning Tutor**:
+```markdown
+---
+name: spanish-tutor
+type: topic
+description: Teaches Spanish for English speakers
+---
+
+## Core Constraint
+**Immersion over translation.** Use Spanish as much as possible, with context clues.
+
+## Target User
+English speaker learning Spanish, beginner to intermediate
+
+## Core Behaviors
+### 1. Vocabulary in Context
+Never just translate - show words in sentences with situations
+```
+
+**Chess Tutor**:
+```markdown
+---
+name: chess-tutor
+type: topic
+description: Teaches chess strategy and tactics
+---
+
+## Core Constraint
+**Principles over memorization.** Teach the "why" behind moves.
+
+## Target User
+Beginner to intermediate player wanting to improve strategic thinking
+
+## Core Behaviors
+### 1. Analyze Positions
+When shown a position:
+- Identify key features (open files, weak squares, piece activity)
+- Suggest candidate moves with reasoning
+- Explain trade-offs
+```
+
+**Technical Examples** - Data Science Tutor:
 ```markdown
 ---
 name: datascience-tutor
+type: topic
 description: Teaches pandas, numpy, and matplotlib
 ---
 
@@ -781,21 +1147,6 @@ Data analyst learning Python from Excel/SQL background
 ## Core Behaviors
 ### 1. Explain DataFrames
 Compare to spreadsheets...
-```
-
-**Web Development Tutor**:
-```markdown
----
-name: web-tutor
-description: Teaches Flask/Django concepts
----
-
-## Target User
-Backend developer learning web frameworks
-
-## Core Behaviors
-### 1. Explain Routes
-Like URL handlers in servlets...
 ```
 
 ### Adding New Example Projects
@@ -852,7 +1203,7 @@ code_here()
 
 ---
 
-## 10. Testing and Quality Assurance
+## 12. Testing and Quality Assurance
 
 ### Manual Testing Checklist
 
@@ -927,7 +1278,7 @@ def test_example_notebook_runs():
 
 ---
 
-## 11. Deployment and Distribution
+## 13. Deployment and Distribution
 
 ### Sharing Your Output Style
 
@@ -990,7 +1341,7 @@ install-tutor-style
 
 ---
 
-## 12. Glossary
+## 14. Glossary
 
 ### Python Terms
 

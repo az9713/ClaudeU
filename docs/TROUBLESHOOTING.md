@@ -1,4 +1,4 @@
-# Python Tutor - Troubleshooting Guide
+# ClaudeU - Troubleshooting Guide
 
 A comprehensive guide to solving common problems. If your issue isn't listed here, open an issue on GitHub.
 
@@ -11,11 +11,13 @@ A comprehensive guide to solving common problems. If your issue isn't listed her
 3. [Jupyter Lab Problems](#3-jupyter-lab-problems)
 4. [Notebook Execution Errors](#4-notebook-execution-errors)
 5. [Output Style Issues](#5-output-style-issues)
-6. [Web Scraping Errors](#6-web-scraping-errors)
-7. [Python Environment Issues](#7-python-environment-issues)
-8. [Common Error Messages](#8-common-error-messages)
-9. [Performance Issues](#9-performance-issues)
-10. [Getting More Help](#10-getting-more-help)
+6. [/tutor Command Issues](#6-tutor-command-issues)
+7. [Teaching Method Issues](#7-teaching-method-issues)
+8. [Web Scraping Errors](#8-web-scraping-errors)
+9. [Python Environment Issues](#9-python-environment-issues)
+10. [Common Error Messages](#10-common-error-messages)
+11. [Performance Issues](#11-performance-issues)
+12. [Getting More Help](#12-getting-more-help)
 
 ---
 
@@ -328,6 +330,19 @@ result  # This will display in Jupyter
 
 ## 5. Output Style Issues
 
+### Exiting a Tutor Style
+
+**Symptom**: You're in a tutor mode and want to return to normal Claude behavior
+
+**Solution**: Run the following command to return to default behavior:
+```
+/output-style Default
+```
+
+This deactivates any active tutor and restores Claude's standard responses. You can then activate a different tutor if desired.
+
+---
+
 ### Style Not Loading
 
 **Symptom**: `/output-style python-tutor` shows error
@@ -379,7 +394,224 @@ result  # This will display in Jupyter
 
 ---
 
-## 6. Web Scraping Errors
+## 6. /tutor Command Issues
+
+### /tutor Command Not Recognized
+
+**Symptom**:
+```
+Unknown command: /tutor
+```
+
+**Cause**: The `/tutor` command file doesn't exist or is in the wrong location.
+
+**Solution**:
+1. Check the file exists:
+   ```bash
+   ls -la .claude/commands/tutor.md
+   ```
+2. If missing, ensure you're in the python-tutor project directory
+3. The file should be at `.claude/commands/tutor.md`
+
+---
+
+### /tutor list Shows No Tutors
+
+**Symptom**: `/tutor list` returns empty or incomplete list
+
+**Solutions**:
+1. Check output styles directory exists:
+   ```bash
+   ls -la .claude/output-styles/
+   ```
+2. Verify tutor files have valid YAML frontmatter
+3. Ensure files have `.md` extension
+
+---
+
+### /tutor combine Fails
+
+**Symptom**: Error when combining tutors
+
+**Common Causes and Solutions**:
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| "Tutor 'X' not found" | File doesn't exist | Run `/tutor list` to see available tutors |
+| "Both are teaching methods" | Combining method + method | This is a warning; confirm to proceed |
+| "Both are topic tutors" | Combining topic + topic | This is a warning; confirm to proceed |
+| "Cannot combine a tutor with itself" | Same tutor specified twice | Use two different tutors |
+
+**Checking Tutor Type**:
+```bash
+# View the type field in a tutor file
+head -10 .claude/output-styles/socratic.md
+# Look for: type: method or type: topic
+```
+
+---
+
+### Combined Tutor Not Working
+
+**Symptom**: Combined tutor doesn't behave as expected
+
+**Solutions**:
+1. **Regenerate the combination**:
+   ```
+   /tutor combine socratic python-tutor
+   > "Already exists. Regenerate? (y/n)" → y
+   ```
+
+2. **Check the generated file**:
+   ```bash
+   cat .claude/output-styles/socratic-python-tutor.md
+   ```
+
+3. **Verify both source tutors work individually**:
+   ```
+   /output-style socratic
+   /output-style python-tutor
+   ```
+
+---
+
+### /tutor create Produces Invalid File
+
+**Symptom**: Created tutor doesn't work or has errors
+
+**Solution**: Check the generated file for:
+1. Valid YAML frontmatter (lines between `---` markers)
+2. Required fields: `name`, `type`, `description`
+3. No syntax errors in the markdown
+
+**Manual Fix**: Edit the file directly:
+```bash
+# Open in editor
+code .claude/output-styles/your-tutor.md
+```
+
+---
+
+### Newly Created Tutor Not Appearing in /tutor list
+
+**Symptom**: You created a new tutor with `/tutor create` or `/tutor combine`, but it doesn't appear in `/tutor list`
+
+**Cause**: Claude Code caches the list of available output styles at startup.
+
+**Solution**:
+1. Exit Claude Code (type `exit` or press Ctrl+C)
+2. Restart Claude Code with `claude`
+3. Run `/tutor list` again - your new tutor should appear
+
+**Note**: This only affects seeing the tutor in the list. The tutor file exists immediately and can be activated with `/output-style <name>` even before restarting.
+
+---
+
+## 7. Teaching Method Issues
+
+### Socratic Method Gives Direct Answers
+
+**Symptom**: Socratic tutor explains instead of asking questions
+
+**Solutions**:
+1. Re-activate the style:
+   ```
+   /output-style socratic
+   ```
+2. The tutor may break character if you explicitly ask for answers
+3. Try rephrasing your question to invite dialogue
+
+---
+
+### ELI5 Uses Technical Jargon
+
+**Symptom**: ELI5 tutor uses complex terms
+
+**Solutions**:
+1. Ask for simpler explanation:
+   ```
+   Can you explain that more simply?
+   ```
+2. Re-activate the style if it drifted
+3. Check if another style was accidentally activated
+
+---
+
+### Rubber Duck Doesn't Prompt for Explanation
+
+**Symptom**: Rubber Duck gives insights without making you explain first
+
+**Solutions**:
+1. The tutor expects you to explain first; try starting with:
+   ```
+   Let me explain what I think this code does...
+   ```
+2. Re-activate if behavior drifted:
+   ```
+   /output-style rubber-duck
+   ```
+
+---
+
+### Combined Tutor Has Conflicting Behaviors
+
+**Symptom**: Combined tutor (e.g., socratic-python-tutor) behaves inconsistently
+
+**Cause**: The method and topic constraints may conflict.
+
+**Solutions**:
+1. **Regenerate with clearer priority**:
+   ```
+   /tutor combine socratic python-tutor
+   ```
+2. **Use one style at a time** if conflicts persist
+3. **Manually edit** the combined file to clarify priority
+
+**Common Conflicts**:
+
+| Combination | Conflict | Resolution |
+|-------------|----------|------------|
+| socratic + any topic | Socratic wants questions; topic wants to explain | Socratic questions about topic concepts |
+| minimalist + verbose topic | Word limits vs detailed explanations | Minimalist wins; ultra-brief responses |
+| eli5 + technical topic | Simple language vs technical accuracy | ELI5 wins; no jargon allowed |
+
+---
+
+### Method Style Not Topic-Agnostic
+
+**Symptom**: Teaching method only works for certain subjects
+
+**Cause**: Method file may have topic-specific constraints.
+
+**Solution**: Check that the method file has:
+```yaml
+keep-coding-instructions: false
+```
+
+This ensures the method works for any topic, not just coding.
+
+---
+
+### Type Field Missing From Tutor
+
+**Symptom**: `/tutor list` miscategorizes a tutor
+
+**Cause**: Tutor file missing `type` field in frontmatter.
+
+**Solution**: Add the type field:
+```yaml
+---
+name: your-tutor
+type: method   # or: topic, combined
+description: Your tutor description
+---
+```
+
+**Default Behavior**: Files without `type` are treated as `topic` for backward compatibility.
+
+---
+
+## 8. Web Scraping Errors
 
 ### Connection Error
 
@@ -476,7 +708,7 @@ else:
 
 ---
 
-## 7. Python Environment Issues
+## 9. Python Environment Issues
 
 ### Wrong Python Version
 
@@ -538,7 +770,7 @@ ERROR: Cannot install X because conflicts with Y
 
 ---
 
-## 8. Common Error Messages
+## 10. Common Error Messages
 
 ### Quick Reference Table
 
@@ -621,7 +853,7 @@ print(items[5] if len(items) > 5 else "Not found")
 
 ---
 
-## 9. Performance Issues
+## 11. Performance Issues
 
 ### Notebook Running Slowly
 
@@ -667,7 +899,7 @@ print(items[5] if len(items) > 5 else "Not found")
 
 ---
 
-## 10. Getting More Help
+## 12. Getting More Help
 
 ### Self-Diagnosis Checklist
 

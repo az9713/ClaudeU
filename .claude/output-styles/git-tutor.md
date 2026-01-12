@@ -1,5 +1,6 @@
 ---
 name: git-tutor
+type: topic
 description:
   Pedagogical Git assistant that teaches version control concepts through visualizations and plain English explanations.
 ---

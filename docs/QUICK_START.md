@@ -1,6 +1,15 @@
-# Python Tutor - Quick Start Guide
+# ClaudeU - Quick Start Guide
 
-Get up and running in 5 minutes, then try 12 educational use cases to experience the power of AI-assisted learning.
+Get up and running in 5 minutes, then start building your **personalized AI university** - with unlimited courses taught by unlimited customized tutors.
+
+## The Big Picture
+
+This isn't just a Python tutor. It's a **framework for creating any tutor you can imagine**:
+
+- **Any topic**: Python, cooking, chess, music theory, home repair, languages...
+- **Any teaching style**: Socratic questioning, simple analogies, hands-on challenges, concise summaries...
+- **Mix and match**: Combine any style with any topic to create your perfect learning experience
+- **Grows with you**: Build a personal library of tutors over time - your own AI university
 
 ---
 
@@ -58,6 +67,53 @@ Type this in Claude Code:
 ```
 
 **Done!** You're ready to learn.
+
+---
+
+## Choose Your Learning Style
+
+Different people learn best in different ways. This project includes **teaching methods** that change HOW the tutor teaches:
+
+| Method | Command | Best For |
+|--------|---------|----------|
+| **Socratic** | `/output-style socratic` | Learners who want to discover answers themselves |
+| **Rubber Duck** | `/output-style rubber-duck` | Debugging - explains your code back to you |
+| **ELI5** | `/output-style eli5` | Complete beginners who need simple analogies |
+| **Challenge-First** | `/output-style challenge-first` | Hands-on learners who like puzzles |
+| **Minimalist** | `/output-style minimalist` | Quick answers without lengthy explanations |
+
+### Combining Methods with Topics
+
+You can combine a teaching method with a topic tutor:
+
+```bash
+# Activate the /tutor command first
+/tutor combine socratic python-tutor
+/output-style socratic-python-tutor
+```
+
+This creates a Python tutor that **only asks guiding questions** instead of explaining directly.
+
+### The /tutor Command
+
+Use `/tutor` to manage all tutors:
+
+```bash
+/tutor list              # See all available tutors (fast - no file reads)
+/tutor describe eli5     # Learn what a tutor does (shows description)
+/tutor combine eli5 git-tutor  # Create a combined tutor
+```
+
+See [TUTOR_COMMAND.md](TUTOR_COMMAND.md) for complete documentation.
+
+### Exiting Tutor Mode
+
+To return to normal Claude behavior:
+```bash
+/output-style Default
+```
+
+**Note**: After creating a new tutor, restart Claude Code (`exit` then `claude`) for it to appear in `/tutor list`.
 
 ---
 
@@ -415,6 +471,27 @@ claude                  # Start Claude Code
 - [ ] Use the tutor with your own code
 - [ ] Explain concepts to someone else (great way to learn!)
 - [ ] Start a simple project of your own
+
+### Beyond Week 4: Build Your AI University
+
+Once you're comfortable with the basics, expand your personal tutor library:
+
+```bash
+# Create tutors for other things you want to learn
+/tutor create cooking-tutor
+/tutor create spanish-tutor
+/tutor create chess-tutor
+
+# Experiment with teaching styles
+/tutor combine socratic cooking-tutor    # Discover recipes through questions
+/tutor combine challenge-first chess-tutor  # Learn chess by solving puzzles
+
+# Invent your own teaching methods
+/tutor create storytelling              # A method that teaches through narratives
+/tutor combine storytelling history-tutor   # History told as stories
+```
+
+**Your tutor library grows with you.** Over time, you build a personalized curriculum covering every subject you care about, each taught exactly the way you learn best.
 
 ---
 

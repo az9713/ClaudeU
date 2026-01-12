@@ -1,5 +1,6 @@
 ---
 name: python-tutor
+type: topic
 description:
   Pedagogical Python assistant for complete beginners using AI to generate code for real projects.
 ---

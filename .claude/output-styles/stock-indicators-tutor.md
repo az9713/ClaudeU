@@ -1,5 +1,6 @@
 ---
 name: stock-indicators-tutor
+type: topic
 description:
   Pedagogical stock analysis assistant for beginners learning fundamental and technical indicators.
 ---

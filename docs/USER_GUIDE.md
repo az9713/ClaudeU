@@ -1,31 +1,35 @@
-# Python Tutor - User Guide
+# ClaudeU - User Guide
 
-A friendly guide for anyone who wants to learn Python with the help of an AI tutor. No prior programming experience required!
+A friendly guide for building your **personalized AI university** - with unlimited courses taught by unlimited customized tutors. Start with Python, then expand to any subject you want to learn.
+
+**No prior programming experience required!**
 
 ---
 
 ## Table of Contents
 
-1. [What is Python Tutor?](#1-what-is-python-tutor)
+1. [What is ClaudeU?](#1-what-is-claudeu)
 2. [Getting Started (First-Time Setup)](#2-getting-started-first-time-setup)
 3. [Your First Conversation with the Tutor](#3-your-first-conversation-with-the-tutor)
 4. [What Can the Tutor Do?](#4-what-can-the-tutor-do)
-5. [Working with Practice Notebooks](#5-working-with-practice-notebooks)
-6. [Using Cheatsheets](#6-using-cheatsheets)
-7. [Understanding Error Messages](#7-understanding-error-messages)
-8. [Learning from the Example Project](#8-learning-from-the-example-project)
-9. [Tips for Effective Learning](#9-tips-for-effective-learning)
-10. [Common Questions](#10-common-questions)
+5. [Choosing Your Teaching Style](#5-choosing-your-teaching-style)
+6. [The /tutor Command](#6-the-tutor-command)
+7. [Working with Practice Notebooks](#7-working-with-practice-notebooks)
+8. [Using Cheatsheets](#8-using-cheatsheets)
+9. [Understanding Error Messages](#9-understanding-error-messages)
+10. [Learning from the Example Project](#10-learning-from-the-example-project)
+11. [Tips for Effective Learning](#11-tips-for-effective-learning)
+12. [Common Questions](#12-common-questions)
 
 ---
 
-## 1. What is Python Tutor?
+## 1. What is ClaudeU?
 
 ### The Problem It Solves
 
 Many people today use AI tools like ChatGPT or Claude to write code for them. While this gets things working quickly, it creates a problem: you end up with code you don't understand and can't modify yourself.
 
-**Python Tutor is different.** Instead of writing code for you, it **teaches you** what the code means. Think of it like having a patient teacher sitting next to you who:
+**ClaudeU is different.** Instead of writing code for you, it **teaches you** what the code means. Think of it like having a patient teacher sitting next to you who:
 
 - Explains code in plain English
 - Uses everyday examples to clarify concepts
@@ -35,7 +39,7 @@ Many people today use AI tools like ChatGPT or Claude to write code for them. Wh
 
 ### How It Works
 
-Python Tutor is a special "personality" for Claude (an AI assistant). When you activate it, Claude stops trying to solve your problems by writing code. Instead, it focuses on helping you understand so you can write and modify code yourself.
+ClaudeU is a special "personality" framework for Claude (an AI assistant). When you activate a tutor, Claude stops trying to solve your problems by writing code. Instead, it focuses on helping you understand so you can write and modify code yourself.
 
 ### Why Use an Output Style Instead of Just Prompting?
 
@@ -59,6 +63,23 @@ You could tell Claude "act like a tutor" in every message - but output styles of
 - **Cheatsheets**: Quick reference guides based on your actual code
 - **Error Translation**: Error messages explained in human language
 - **Guided Modifications**: Step-by-step descriptions of how to change code
+
+### The Bigger Picture: Your Personal AI University
+
+The included Python Tutor is just the beginning. ClaudeU lets you create tutors for **any subject**:
+
+| Want to Learn... | Create This Tutor |
+|------------------|-------------------|
+| Playing guitar | `guitar-tutor` |
+| Cooking skills | `cooking-tutor` |
+| A new language | `spanish-tutor` |
+| Chess strategy | `chess-tutor` |
+| Personal finance | `finance-tutor` |
+| Home improvement | `diy-tutor` |
+
+And you can customize HOW each tutor teaches by combining it with teaching methods like `socratic` (learn through questions), `eli5` (simple explanations), or `challenge-first` (hands-on puzzles).
+
+**Over time, you build a personal library of tutors** - your own AI university that knows exactly how to teach YOU
 
 ---
 
@@ -350,7 +371,154 @@ What's wrong with this function?
 
 ---
 
-## 5. Working with Practice Notebooks
+## 5. Choosing Your Teaching Style
+
+Different people learn best in different ways. This project includes **teaching methods** - styles that change HOW the tutor teaches, not WHAT it teaches.
+
+### Available Teaching Methods
+
+| Method | Best For | How It Works |
+|--------|----------|--------------|
+| **Socratic** | Self-discovery | Only asks guiding questions, never gives direct answers |
+| **Rubber Duck** | Debugging | Makes you explain your code step-by-step |
+| **ELI5** | Complete beginners | Uses simple analogies, no jargon |
+| **Challenge-First** | Hands-on learners | Gives you a puzzle before explaining |
+| **Minimalist** | Quick reference | Ultra-concise answers under 50 words |
+
+### How to Switch Teaching Methods
+
+Use the `/output-style` command:
+
+```bash
+/output-style socratic      # Only questions, discover answers yourself
+/output-style eli5          # Simple explanations for beginners
+/output-style minimalist    # Quick, concise answers
+```
+
+### Combining Methods with Topic Tutors
+
+You can combine a teaching method with a topic tutor to get the best of both:
+
+```bash
+/tutor combine socratic python-tutor
+/output-style socratic-python-tutor
+```
+
+This creates a Python tutor that **teaches through questions only**. The tutor knows Python (topic) but will only ask guiding questions (method).
+
+### Exiting a Tutor Style
+
+If you want to return to Claude's normal behavior (no tutor mode), run:
+
+```bash
+/output-style Default
+```
+
+This deactivates the current tutor and restores standard Claude responses. You can always activate a different tutor afterward.
+
+### Which Style Should You Choose?
+
+| If you... | Try this method |
+|-----------|-----------------|
+| Want to truly understand, not just memorize | `socratic` |
+| Have buggy code and can't find the problem | `rubber-duck` |
+| Are completely new and feel overwhelmed | `eli5` |
+| Learn best by doing, not reading | `challenge-first` |
+| Already understand basics, just need quick reminders | `minimalist` |
+| Want balanced explanations with some guidance | `python-tutor` (default) |
+
+### Example: Same Question, Different Methods
+
+**Question**: "What is a for loop?"
+
+**python-tutor (default)** would give you:
+- Plain English explanation
+- Real-world analogy
+- Small example
+- Where it appears in your code
+
+**socratic** would respond with:
+- "What do you think happens when you need to do the same thing 10 times in code?"
+- Then build on your answer with more questions
+- Only confirm when YOU explain it correctly
+
+**eli5** would say:
+- "It's like eating cereal - you take one bite, then another, until the bowl is empty. A for loop does the same thing over and over for each item in a list!"
+
+**minimalist** would answer:
+- "Repeats code for each item. `for x in [1,2,3]: print(x)` prints 1, 2, 3."
+
+---
+
+## 6. The /tutor Command
+
+The `/tutor` command is your control center for managing all tutors.
+
+### Quick Reference
+
+| Command | What It Does |
+|---------|--------------|
+| `/tutor list` | Show all available tutors |
+| `/tutor describe <name>` | Learn what a tutor does |
+| `/tutor combine <A> <B>` | Create a combined tutor |
+| `/tutor create <name>` | Make a new tutor |
+| `/tutor activate <name>` | Instructions to activate |
+| `/tutor delete <name>` | Delete a tutor (with confirmation) |
+
+### Listing All Tutors
+
+```bash
+/tutor list
+```
+
+Shows all tutors organized by type (inferred from filenames for speed):
+- **Methods**: challenge-first, eli5, minimalist, rubber-duck, socratic
+- **Topics**: git-tutor, python-tutor, stock-indicators-tutor
+- **Combined**: Any tutors you've created by combining
+
+**Note:** Descriptions aren't shown in the list. Use `/tutor describe <name>` for details.
+
+### Learning About a Tutor
+
+```bash
+/tutor describe socratic
+```
+
+Shows:
+- What the tutor does
+- Its core teaching approach
+- Example of how it responds
+
+### Creating Combined Tutors
+
+```bash
+/tutor combine eli5 git-tutor
+```
+
+This creates `eli5-git-tutor.md` - a Git tutor that uses simple analogies and no jargon.
+
+**Order doesn't matter**: `/tutor combine git-tutor eli5` creates the same file.
+
+### Creating New Tutors
+
+```bash
+/tutor create music-tutor
+```
+
+The command will ask you:
+1. Is this a METHOD (how to teach) or TOPIC (what to teach)?
+2. Questions specific to that type
+3. Then generates the tutor file for you
+
+**Important**: After creating a new tutor with `/tutor create` or `/tutor combine`, you need to **restart Claude Code** for the new tutor to appear in `/tutor list`. Exit with `exit` or Ctrl+C, then run `claude` again. (The tutor file exists immediately and can be activated with `/output-style <name>` even before restarting.)
+
+### Full Documentation
+
+See [TUTOR_COMMAND.md](TUTOR_COMMAND.md) for complete documentation including edge cases and troubleshooting.
+
+---
+
+## 7. Working with Practice Notebooks
 
 ### What Are Notebooks?
 
@@ -418,7 +586,7 @@ This notebook teaches you:
 
 ---
 
-## 6. Using Cheatsheets
+## 8. Using Cheatsheets
 
 ### What Are Cheatsheets?
 
@@ -457,7 +625,7 @@ Sections include:
 
 ---
 
-## 7. Understanding Error Messages
+## 9. Understanding Error Messages
 
 ### Why Errors Happen
 
@@ -506,7 +674,7 @@ AttributeError: 'NoneType' object has no attribute 'text'
 
 ---
 
-## 8. Learning from the Example Project
+## 10. Learning from the Example Project
 
 ### What the Example Does
 
@@ -564,7 +732,7 @@ Converts the data to a pandas DataFrame and saves as CSV.
 
 ---
 
-## 9. Tips for Effective Learning
+## 11. Tips for Effective Learning
 
 ### Start Small
 
@@ -614,7 +782,7 @@ Short, frequent sessions beat long, rare ones.
 
 ---
 
-## 10. Common Questions
+## 12. Common Questions
 
 ### "The tutor won't write code for me - why?"
 
