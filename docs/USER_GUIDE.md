@@ -37,6 +37,21 @@ Many people today use AI tools like ChatGPT or Claude to write code for them. Wh
 
 Python Tutor is a special "personality" for Claude (an AI assistant). When you activate it, Claude stops trying to solve your problems by writing code. Instead, it focuses on helping you understand so you can write and modify code yourself.
 
+### Why Use an Output Style Instead of Just Prompting?
+
+You could tell Claude "act like a tutor" in every message - but output styles offer real advantages:
+
+| What You Get | With Ad-hoc Prompting | With Output Style |
+|--------------|----------------------|-------------------|
+| **Persistence** | Must re-explain each message | Activates once, lasts all session |
+| **Reliability** | Claude may drift from instructions | Hard boundaries always enforced |
+| **Your effort** | Wasted on re-establishing persona | Focused purely on your questions |
+| **Switching tutors** | Paragraphs of instructions | Just `/output-style git-tutor` |
+
+**Key insight:** Output styles are like "compiled" tutors - defined once, running consistently. Ad-hoc prompting is "interpreted" - must re-parse every time.
+
+[Read the full explanation](WHY_OUTPUT_STYLES.md)
+
 ### What You'll Get
 
 - **Explanations**: Plain English descriptions of what code does
@@ -393,7 +408,7 @@ Every notebook the tutor creates follows this pattern:
 
 ### Example: HTML and BeautifulSoup Notebook
 
-Open `tutor/notebooks/html-and-beautifulsoup.ipynb`
+Open `tutor/notebooks/web-scraping/html-and-beautifulsoup.ipynb`
 
 This notebook teaches you:
 - What HTML looks like
@@ -430,7 +445,7 @@ Each cheatsheet contains:
 
 ### Example: BeautifulSoup Cheatsheet
 
-Open `tutor/reference/beautifulsoup-cheatsheet.md`
+Open `tutor/reference/web-scraping/beautifulsoup-cheatsheet.md`
 
 Sections include:
 - Creating a soup object

@@ -4,6 +4,24 @@ Get up and running in 5 minutes, then try 12 educational use cases to experience
 
 ---
 
+## Why Output Styles?
+
+You might wonder: "Can't I just prompt Claude to act like a tutor?" You can - but output styles offer significant advantages:
+
+| Ad-hoc Prompting | Output Style |
+|------------------|--------------|
+| Must re-explain each message | Behavior persists entire session |
+| Claude may drift or forget rules | Hard boundaries always enforced |
+| Your prompts wasted on re-establishing persona | Focus purely on your questions |
+| Paragraphs of instructions to switch tutors | Just `/output-style git-tutor` |
+| Copy-paste text to share | Copy the `.md` file |
+
+**Think of it this way:** Output styles are "compiled" tutor personas. Ad-hoc prompting is "interpreted" - works but less reliable and more overhead per interaction.
+
+[Read the full explanation](WHY_OUTPUT_STYLES.md)
+
+---
+
 ## 5-Minute Setup
 
 ### Step 1: Open Your Terminal
@@ -205,7 +223,7 @@ What is HTML and why do I need to know about it for web scraping?
 Open the html-and-beautifulsoup notebook and try it
 ```
 
-Go to Jupyter Lab, open `tutor/notebooks/html-and-beautifulsoup.ipynb`, and run through it cell by cell.
+Go to Jupyter Lab, open `tutor/notebooks/web-scraping/html-and-beautifulsoup.ipynb`, and run through it cell by cell.
 
 ---
 

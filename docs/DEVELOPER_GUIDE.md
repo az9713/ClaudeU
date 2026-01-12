@@ -445,7 +445,7 @@ This function extracts structured data from a job posting page. It's complex bec
 
 **For Java developers**: The function uses Python's optional typing with `def function(param: Type) -> ReturnType`.
 
-### `tutor/notebooks/html-and-beautifulsoup.ipynb`
+### `tutor/notebooks/web-scraping/html-and-beautifulsoup.ipynb`
 
 This notebook teaches BeautifulSoup concepts progressively:
 
@@ -455,7 +455,7 @@ This notebook teaches BeautifulSoup concepts progressively:
 4. **Connection to real code**: Reference `example.ipynb`
 5. **Practice exercise**: Hands-on challenge
 
-### `tutor/reference/beautifulsoup-cheatsheet.md`
+### `tutor/reference/web-scraping/beautifulsoup-cheatsheet.md`
 
 A quick reference guide that:
 - Lists common BeautifulSoup methods
@@ -470,6 +470,31 @@ A quick reference guide that:
 ### What Are Output Styles?
 
 Output styles are markdown files that customize how Claude responds. They're loaded when you run `/output-style <name>` in Claude Code.
+
+### Why Output Styles Instead of Ad-hoc Prompting?
+
+You can always prompt Claude directly to behave a certain way. But output styles offer significant architectural advantages:
+
+| Aspect | Ad-hoc Prompting | Output Style |
+|--------|------------------|--------------|
+| **Persistence** | Per-message | Per-session |
+| **Constraint enforcement** | Unreliable | Consistent |
+| **Prompt overhead** | High (repeat instructions) | Zero (just ask questions) |
+| **Completeness** | Usually incomplete | Structured, complete |
+| **Switching contexts** | Paragraph of text | One command |
+| **Shareability** | Copy-paste text | Copy file |
+| **Version control** | Not practical | Git-friendly |
+| **Project defaults** | Not possible | settings.local.json |
+| **Artifact locations** | Random | Defined structure |
+
+**The mental model:** Output styles are "compiled" personas - defined once, running consistently. Ad-hoc prompting is "interpreted" - must re-parse each time.
+
+For tutors specifically, this means:
+- Teaching constraints are **always enforced** (won't accidentally write code for you)
+- Artifact locations are **predictable** (notebooks always in `tutor/notebooks/`)
+- Switching between Python, Git, and Stock tutors is **one command**
+
+[Read the full explanation](WHY_OUTPUT_STYLES.md)
 
 ### Style File Structure
 
@@ -856,7 +881,7 @@ Since there are no automated tests, use this checklist:
 
 ```bash
 # Run all cells in a notebook via command line
-jupyter nbconvert --execute --to notebook tutor/notebooks/html-and-beautifulsoup.ipynb
+jupyter nbconvert --execute --to notebook tutor/notebooks/web-scraping/html-and-beautifulsoup.ipynb
 ```
 
 If this completes without errors, the notebook works.

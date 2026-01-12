@@ -2,6 +2,22 @@
 
 A Claude Code output-style that turns Claude into a Python tutor for complete beginners. Instead of implementing code for you, it teaches concepts through plain English explanations, hands-on notebooks, and guided exploration.
 
+## Why Output Styles Instead of Just Prompting?
+
+You can always prompt Claude directly. So why use output styles?
+
+| Aspect | Ad-hoc Prompting | Output Style |
+|--------|------------------|--------------|
+| **Persistence** | Must re-explain each message | Behavior persists entire session |
+| **Constraints** | Claude may drift or forget rules | Hard boundaries always enforced |
+| **Your prompts** | Wasted on re-establishing persona | Focus purely on your questions |
+| **Switching tutors** | Paragraphs of instructions | Just `/output-style git-tutor` |
+| **Sharing** | Copy-paste text | Copy the `.md` file |
+
+**Key insight:** Output styles are "compiled" tutor personas. Ad-hoc prompting is "interpreted" - works but less reliable and more overhead per interaction.
+
+[Read the full explanation](docs/WHY_OUTPUT_STYLES.md)
+
 ## Available Tutors
 
 | Tutor | Output Style | Description |
@@ -19,6 +35,7 @@ A Claude Code output-style that turns Claude into a Python tutor for complete be
 
 | Document | Audience | Description |
 |----------|----------|-------------|
+| [Why Output Styles?](docs/WHY_OUTPUT_STYLES.md) | Everyone | Why tutors-as-output-styles beat ad-hoc prompting |
 | [Quick Start Guide](docs/QUICK_START.md) | Everyone | Get running in 5 minutes + 12 educational use cases |
 | [User Guide](docs/USER_GUIDE.md) | Learners | Complete guide for using the tutor |
 | [Developer Guide](docs/DEVELOPER_GUIDE.md) | Developers | Deep dive for extending the project |
